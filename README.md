@@ -16,6 +16,41 @@ to see:
 - Predictive ETA  
 - Dynamic KPI cards  
 - LLM-style AI Summary (per container)
+## 🚛 Sample Container Numbers by Shipping Line
+
+Below are sample container numbers you can use for testing or demoing the live app.  
+Each container belongs to one of the top 10 global shipping lines, with realistic trade routes and vessels.
+
+| Shipping Line | Container Numbers | Route | Vessel |
+|----------------|-------------------|--------|---------|
+| **MSC (Mediterranean Shipping Co.)** | `MSCU1301001`<br>`MSCU1301003`<br>`MSCU1301008` | Singapore → Rotterdam (via Suez) | *MSC Tessa* |
+| **Maersk Line** | `MAEU6501002`<br>`MAEU6501005`<br>`MAEU6501009` | Shanghai → Los Angeles (Trans-Pacific) | *Maersk Iowa* |
+| **CMA CGM** | `CMAU2016001`<br>`CMAU2016004`<br>`CMAU2016007` | Hamburg → New York (Trans-Atlantic) | *CMA CGM Jacques Saadé* |
+| **COSCO Shipping** | `COSU3302003`<br>`COSU3302005`<br>`COSU3302008` | Jebel Ali → Mumbai (Arabian Sea) | *COSCO Shipping Taurus* |
+| **Hapag-Lloyd** | `HLCU8806001`<br>`HLCU8806005`<br>`HLCU8806009` | Algeciras → Lagos (West Africa) | *Hamburg Express* |
+| **ONE (Ocean Network Express)** | `ONEU7776002`<br>`ONEU7776005`<br>`ONEU7776009` | Busan → Singapore (Intra-Asia) | *ONE Apus* |
+| **Evergreen Marine** | `EVEU9091002`<br>`EVEU9091005`<br>`EVEU9091007` | Sydney → Hong Kong (Oceania–Asia) | *Ever Given* |
+| **HMM (Hyundai Merchant Marine)** | `HMMU6061001`<br>`HMMU6061004`<br>`HMMU6061006` | Ningbo → Piraeus (Asia–Europe) | *HMM Algeciras* |
+| **ZIM Integrated Shipping** | `ZIMU7002004`<br>`ZIMU7002007`<br>`ZIMU7002010` | Santos → Antwerp (South America–Europe) | *ZIM Rotterdam* |
+| **Yang Ming Marine** | `YMLU9901003`<br>`YMLU9901007`<br>`YMLU9901010` | Houston → Colón, Panama (Gulf–Canal) | *Yang Ming Wish* |
+
+> 💡 You can copy any of these container numbers and search them directly in the [**live demo**](https://YOUR-VERCEL-URL.vercel.app) to visualize:
+> - Vessel position  
+> - Weather data  
+> - Predicted ETA  
+> - AI-generated summary  
+
+---
+
+### Example Use
+
+- Try searching `MSCU1301003` → **MSC Tessa (Singapore → Rotterdam)**  
+- Try `CMAU2016004` → **CMA CGM Jacques Saadé (Hamburg → New York)**  
+- Try `HMMU6061006` → **HMM Algeciras (Ningbo → Piraeus)**  
+
+---
+
+✅ **Tip:** These mock containers are consistent with your `/data/ships.json` dataset — so the map, ETA, KPIs, and summary will update dynamically for each one.
 
 ---
 
