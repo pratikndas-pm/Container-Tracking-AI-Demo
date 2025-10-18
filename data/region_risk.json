@@ -1,1 +1,11 @@
-{"Gulf": 0.25, "Arabian Sea": 0.4, "Indian Ocean": 0.3, "North Pacific": 0.22, "North Atlantic": 0.28}
+{
+  "Indian Ocean": 0.28,
+  "North Pacific": 0.3,
+  "North Atlantic": 0.22,
+  "Arabian Sea": 0.35,
+  "East Atlantic": 0.25,
+  "South China Sea": 0.32,
+  "Coral Sea": 0.2,
+  "Gulf of Mexico": 0.26,
+  "South Atlantic": 0.27
+}
