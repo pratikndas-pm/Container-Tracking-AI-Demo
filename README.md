@@ -1,3 +1,3 @@
-# Container Tracking Demo — Flat
+# Container Tracking AI Demo
 
-Deploy to Vercel. Open /api/health to verify.
+Deploy to Vercel by importing this repo.
