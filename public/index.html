@@ -1,52 +1,137 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/>
-<title>Container Tracking Demo</title>
-<script src='https://cdn.tailwindcss.com'></script>
-<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>
-<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
-<style>#map{height:420px}</style></head>
-<body class='bg-slate-50 text-slate-900'>
-<header class='px-6 py-4 border-b bg-white sticky top-0 z-50'>
-  <div class='max-w-7xl mx-auto flex items-center justify-between gap-4'>
-    <h1 class='text-2xl font-bold'>🚢 Container Tracking — Demo</h1>
-    <nav class='text-sm'><a class='underline' href='/docs.html'>Docs</a> · <a class='underline' href='/test.html'>Test</a></nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌍 Container Tracking AI Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+  <div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold mb-2">🚢 Container Tracking AI Platform</h1>
+    <p class="text-sm text-gray-500 mb-6">Real-time vessel visibility, weather, ETA prediction, and AI summary.</p>
+
+    <!-- Search -->
+    <div class="bg-white shadow rounded-lg p-4 flex items-center space-x-3">
+      <input id="cn" type="text" placeholder="Enter Container Number (e.g. MSCU1234000)" class="flex-1 border rounded p-2"/>
+      <button onclick="lookup()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
+      <button onclick="generateSummaryForCurrent()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Generate Summary</button>
+    </div>
+
+    <!-- KPI Cards -->
+    <div id="kpis" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6"></div>
+
+    <!-- Map -->
+    <div id="map" class="w-full h-96 mt-6 rounded-lg shadow"></div>
+
+    <!-- Details -->
+    <div id="details" class="bg-white rounded-lg shadow p-4 mt-6 text-sm"></div>
+
+    <!-- Summary -->
+    <div class="mt-6">
+      <label for="summary" class="block text-sm font-medium text-gray-700 mb-1">🧠 AI Summary</label>
+      <textarea id="summary" rows="5" class="w-full border rounded-lg p-3 text-sm" placeholder="AI summary will appear here..."></textarea>
+    </div>
   </div>
-</header>
-<main class='max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6'>
-<section class='space-y-6'>
-  <div class='bg-white p-4 rounded-2xl shadow border'><h2 class='text-lg font-semibold mb-3'>🔎 Lookup</h2><div class='flex gap-2'><input id='cn' class='border rounded px-3 py-2 flex-1' placeholder='e.g., MSCU123400'/><button id='lookup' class='px-4 py-2 rounded bg-black text-white'>Search</button></div></div>
-  <div class='bg-white p-4 rounded-2xl shadow border'><h2 class='text-lg font-semibold mb-3'>🗺️ Map</h2><div id='map' class='rounded-xl border'></div></div>
-  <div class='grid md:grid-cols-2 gap-6'>
-    <div class='bg-white p-4 rounded-2xl shadow border'><h2 class='text-lg font-semibold mb-3'>🌦️ Weather</h2><div id='weather' class='text-sm text-slate-700'>Search or click a table row.</div></div>
-    <div class='bg-white p-4 rounded-2xl shadow border'><h2 class='text-lg font-semibold mb-3'>🧠 Summary</h2><textarea id='summary' class='w-full h-40 border rounded p-3 text-sm' placeholder='Click Generate'></textarea><div class='flex gap-2 mt-3'><button id='genSummary' class='px-3 py-2 rounded bg-indigo-600 text-white text-sm'>Generate</button></div></div>
-  </div>
-  <div class='bg-white p-4 rounded-2xl shadow border'><h2 class='text-lg font-semibold mb-3'>📋 Details</h2><div id='details' class='text-sm text-slate-700'>—</div></div>
-</section>
-<aside class='space-y-6'>
-  <div class='grid sm:grid-cols-2 gap-4'>
-    <div class='bg-white p-4 rounded-2xl shadow border'><div class='text-xs text-slate-500'>On-Time %</div><div id='k1' class='text-2xl font-bold'>—</div></div>
-    <div class='bg-white p-4 rounded-2xl shadow border'><div class='text-xs text-slate-500'>High Risk</div><div id='k2' class='text-2xl font-bold'>—</div></div>
-    <div class='bg-white p-4 rounded-2xl shadow border'><div class='text-xs text-slate-500'>Avg Pred Hours</div><div id='k3' class='text-2xl font-bold'>—</div></div>
-    <div class='bg-white p-4 rounded-2xl shadow border'><div class='text-xs text-slate-500'>Total Shipments</div><div id='k4' class='text-2xl font-bold'>—</div></div>
-  </div>
-  <div class='bg-white p-4 rounded-2xl shadow border'><div class='flex items-center justify-between mb-3'><h2 class='text-lg font-semibold'>📦 Shipments</h2><input id='search' type='text' placeholder='Search vessel / container...' class='border rounded px-3 py-1 text-sm w-52'/></div><div style='max-height:320px;overflow:auto'><table class='w-full text-sm'><thead class='sticky top-0 bg-slate-100'><tr><th class='text-left p-2'>ID</th><th class='text-left p-2'>Vessel</th><th class='text-left p-2'>Lat</th><th class='text-left p-2'>Lon</th><th class='text-left p-2'>Waypoint</th><th class='text-left p-2'>Pred Hours</th><th class='text-left p-2'>ETA (UTC)</th><th class='text-left p-2'>Risk</th></tr></thead><tbody id='rows'></tbody></table></div></div>
-</aside>
-</main>
-<script>
-let map, markers=[], lines=[], allItems=[];
-const rows=document.getElementById('rows'), details=document.getElementById('details'), weatherBox=document.getElementById('weather');
-async function safeFetch(u,o){try{return await fetch(u,o)}catch(e){alert('Network error: '+e.message);throw e}}
-function initMap(){ map=L.map('map').setView([20,50],3); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map); }
-function clearMap(){ markers.forEach(m=>m.remove()); lines.forEach(l=>l.remove()); markers=[]; lines=[]; }
-function renderMap(items,idx=0){ clearMap(); items.forEach((it,i)=>{ const m1=L.marker([it.lat,it.lon]).addTo(map).bindPopup(`<b>${it.vessel}</b><br/>${it.id}<br/>ETA: ${it.metrics.etaUtc}<br/>Risk: ${it.metrics.risk}`); const m2=L.circleMarker([it.waypoint.lat,it.waypoint.lon],{radius:6}).addTo(map).bindPopup('Next waypoint'); markers.push(m1,m2); const l=L.polyline([[it.lat,it.lon],[it.waypoint.lat,it.waypoint.lon]],{weight:2,dashArray:'6,6'}).addTo(map); lines.push(l); if(i===idx){ map.fitBounds([[it.lat,it.lon],[it.waypoint.lat,it.waypoint.lon]],{padding:[40,40]}); }}); }
-function fmt(n,d=1){return Number(n).toFixed(d)}
-function renderTable(items){ rows.innerHTML=''; items.forEach((it,i)=>{ const tr=document.createElement('tr'); tr.className='hover:bg-slate-50 cursor-pointer'; tr.innerHTML=`<td class='p-2 font-mono'>${ it.id }</td><td class='p-2'>${ it.vessel }</td><td class='p-2'>${ fmt(it.lat,3) }</td><td class='p-2'>${ fmt(it.lon,3) }</td><td class='p-2'>${ fmt(it.waypoint.lat,2) }, ${ fmt(it.waypoint.lon,2) }</td><td class='p-2'>${ fmt(it.metrics.predHours,1) }</td><td class='p-2'>${ it.metrics.etaUtc.replace('T',' ').slice(0,16) }</td><td class='p-2 ${it.metrics.risk==='HIGH'?'text-red-600 font-semibold':''}'>${ it.metrics.risk }</td>`; tr.addEventListener('click',async()=>{ renderMap(items,i); await loadWeather(it.lat,it.lon); renderDetails(it); }); rows.appendChild(tr); }); }
-function kpIs(items){ const on=items.filter(i=>i.metrics.onTime).length, high=items.filter(i=>i.metrics.risk==='HIGH').length, avg=items.reduce((a,c)=>a+c.metrics.predHours,0)/Math.max(items.length,1); document.getElementById('k1').textContent=`${Math.round(on/items.length*100)}%`; document.getElementById('k2').textContent=String(high); document.getElementById('k3').textContent=fmt(avg,1); document.getElementById('k4').textContent=String(items.length); }
-async function fetchShips(){ const r=await safeFetch('/api/ships'); const j=await r.json(); return j.items||[]; }
-async function loadWeather(lat,lon){ weatherBox.innerHTML='<span class="text-slate-500">Loading…</span>'; try{ const r=await safeFetch(`/api/weather?lat=${lat}&lon=${lon}`); const j=await r.json(); const c=j.current; if(!c){ weatherBox.textContent='No weather data.'; return; } weatherBox.innerHTML=`<div class='grid grid-cols-2 gap-x-6 gap-y-1'><div><span class='text-slate-500'>Temp:</span> <b>${c.temperature_2m}°C</b></div><div><span class='text-slate-500'>Feels:</span> <b>${c.apparent_temperature}°C</b></div><div><span class='text-slate-500'>Humidity:</span> <b>${c.relative_humidity_2m}%</b></div><div><span class='text-slate-500'>Wind:</span> <b>${c.wind_speed_10m} m/s</b></div><div class='col-span-2'><span class='text-slate-500'>Code:</span> <b>${c.weather_code}</b></div></div>`; }catch(e){ weatherBox.innerHTML=`<span class='text-red-600'>${e}</span>`; } }
-function renderDetails(it){ details.innerHTML=`<div class='space-y-1'><div class='text-xs text-slate-500'>Vessel</div><div class='text-xl font-semibold'>${ it.vessel }</div><div class='text-xs text-slate-500 mt-2'>Shipment</div><div class='font-mono'>${ it.id }</div><div class='text-xs text-slate-500 mt-2'>Containers</div><div style='max-height:120px;overflow:auto'>${ it.containers.map(c=>`<code>${c}</code>`).join(', ') }</div><div class='grid grid-cols-2 gap-3 mt-3'><div><span class='text-slate-500'>Pred Hours:</span> <b>${ fmt(it.metrics.predHours,1) } h</b></div><div><span class='text-slate-500'>ETA (UTC):</span> <b>${ it.metrics.etaUtc.replace('T',' ').slice(0,16) }</b></div><div><span class='text-slate-500'>Risk:</span> <b class='${ it.metrics.risk==='HIGH'?'text-red-600':'' }'>${ it.metrics.risk } (${ fmt(it.metrics.riskScore,2) })</b></div><div><span class='text-slate-500'>Distance:</span> <b>${ fmt(it.metrics.distNm,0) } nm</b></div></div></div>`; }
-async function lookup(){ const cn=document.getElementById('cn').value.trim(); if(!cn){ alert('Enter a container or shipment ID.'); return; } const r=await safeFetch('/api/container?cn='+encodeURIComponent(cn)); if(!r.ok){ details.innerHTML=`<span class='text-red-600'>No match for <b>${cn}</b>.</span>`; return; } const j=await r.json(); const it=j.item; renderMap([it],0); await loadWeather(it.lat,it.lon); renderDetails(it); }
-async function gen(){ const r=await safeFetch('/api/summary',{method:'POST'}); const j=await r.json(); document.getElementById('summary').value=j.summary||''; }
-async function boot(){ initMap(); try{ allItems=await fetchShips(); renderMap(allItems,0); renderTable(allItems); kpIs(allItems);}catch(e){ alert('Failed to load /api/ships. Check routing.'); } document.getElementById('lookup').onclick=lookup; document.getElementById('genSummary').onclick=gen; document.getElementById('cn').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('lookup').click(); }); document.getElementById('search').addEventListener('input',()=>{ const q=document.getElementById('search').value.toLowerCase(); const f=allItems.filter(it => it.id.toLowerCase().includes(q)||it.vessel.toLowerCase().includes(q)||it.containers.some(c=>c.toLowerCase().includes(q))); renderTable(f); }); }
-boot();
-</script>
-</body></html>
+
+  <script>
+    let map, markerShip, markerWp;
+
+    // Initialize Leaflet map
+    function initMap() {
+      map = L.map('map').setView([20, 60], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+    }
+    initMap();
+
+    // Render vessel on map
+    function renderMap(vessel) {
+      const { lat, lon, waypoint } = vessel;
+      if (markerShip) map.removeLayer(markerShip);
+      if (markerWp) map.removeLayer(markerWp);
+
+      markerShip = L.marker([lat, lon]).addTo(map).bindPopup("🚢 Current Location").openPopup();
+      markerWp = L.marker([waypoint.lat, waypoint.lon]).addTo(map).bindPopup("📍 Next Waypoint");
+      const group = L.featureGroup([markerShip, markerWp]);
+      map.fitBounds(group.getBounds().pad(0.3));
+    }
+
+    // Render KPIs
+    function renderKpis(metrics) {
+      const html = `
+        <div class="bg-white p-3 rounded shadow text-center"><div class="text-sm text-gray-500">Distance (nm)</div><div class="font-bold">${metrics.distNm.toFixed(1)}</div></div>
+        <div class="bg-white p-3 rounded shadow text-center"><div class="text-sm text-gray-500">ETA (hrs)</div><div class="font-bold">${metrics.predHours.toFixed(1)}</div></div>
+        <div class="bg-white p-3 rounded shadow text-center"><div class="text-sm text-gray-500">Risk</div><div class="font-bold text-${metrics.risk==='HIGH'?'red':'green'}-600">${metrics.risk}</div></div>
+        <div class="bg-white p-3 rounded shadow text-center"><div class="text-sm text-gray-500">On-Time</div><div class="font-bold">${metrics.onTime ? '✅' : '⚠️'}</div></div>`;
+      document.getElementById('kpis').innerHTML = html;
+    }
+
+    // Load weather
+    async function loadWeather(lat, lon) {
+      try {
+        const r = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+        const j = await r.json();
+        const w = j.current || {};
+        const html = `
+          <div><b>🌡️ Temp:</b> ${w.temperature_2m ?? '-'}°C | <b>💨 Wind:</b> ${w.wind_speed_10m ?? '-'} m/s</div>`;
+        return html;
+      } catch (e) {
+        return `<div class="text-red-500">Weather unavailable</div>`;
+      }
+    }
+
+    // Lookup container
+    async function lookup() {
+      const cn = document.getElementById('cn').value.trim();
+      if (!cn) return alert("Please enter a container number");
+
+      document.getElementById('details').innerHTML = "⏳ Searching...";
+      try {
+        const res = await fetch(`/api/container?cn=${encodeURIComponent(cn)}`);
+        if (!res.ok) {
+          const err = await res.json();
+          const sug = err.suggestions || [];
+          const msg = (err.error || "Not found") + (sug.length ? "<br><b>Suggestions:</b><br>" + sug.map(s =>
+            typeof s === "string" ? s : `${s.sample} (${s.vessel})`
+          ).join("<br>") : "");
+          document.getElementById('details').innerHTML = `<div class="text-red-600">${msg}</div>`;
+          return;
+        }
+
+        const j = await res.json();
+        const it = j.item;
+        renderMap(it);
+        renderKpis(it.metrics);
+        const weatherHtml = await loadWeather(it.lat, it.lon);
+
+        const detailsHtml = `
+          <div><b>Vessel:</b> ${it.vessel}</div>
+          <div><b>Container IDs:</b> ${it.containers.slice(0,5).join(", ")}${it.containers.length>5?"...":""}</div>
+          <div><b>ETA UTC:</b> ${it.metrics.etaUtc}</div>
+          <div><b>Planned ETA (hrs):</b> ${it.etaPlannedHrs}</div>
+          <div>${weatherHtml}</div>`;
+        document.getElementById('details').innerHTML = detailsHtml;
+
+        // 🧠 Dynamic summary from backend
+        document.getElementById('summary').value = j.summary || "No summary available.";
+      } catch (e) {
+        document.getElementById('details').innerHTML = `<div class="text-red-600">${e.message}</div>`;
+      }
+    }
+
+    // Generate summary for current container
+    async function generateSummaryForCurrent() {
+      const cn = document.getElementById('cn').value.trim();
+      if (!cn) return alert("Enter a container first.");
+      const r = await fetch(`/api/summary?cn=${encodeURIComponent(cn)}`, { method: "POST" });
+      const j = await r.json();
+      document.getElementById('summary').value = j.summary || "No summary found.";
+    }
+  </script>
+</body>
+</html>
