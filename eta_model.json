@@ -1,0 +1,1 @@
+{"intercept": 1.25, "coef": {"distance_nm": 0.045, "inv_speed": 18.0, "wind": 0.25, "congestion": 2.0}, "sigma_hours": 2.5}
